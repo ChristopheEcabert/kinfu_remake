@@ -20,6 +20,7 @@ namespace kfusion {
                        bool repeat)
     : total_frames_(n_frames)
     , manual_align_(false)
+    , cur_frame_(0)
     , K_ir_((cv::Mat_<float>(3,3) << 589.9,   0.0, 328.4,
                                       0.0, 589.1, 236.89,
                                       0.0,   0.0,   1.0))
@@ -34,7 +35,17 @@ namespace kfusion {
     this->open(depth_filename, rgb_filename, repeat);
   }
 
-  void BinSource::open(const std::string& depth_filename, const std::string& rgb_filename,
+  /*
+   * @name open
+   * @fn int open(const std::string& depth_filename, const std::string& rgb_filename,
+                  bool repeat = false)
+   * @brief Open the bin stream
+   * @param[in] depth filename
+   * @param[in] color filename
+   * @param[in] wether to repeat or not
+   * @return total number of frames to grab
+   */
+  int BinSource::open(const std::string& depth_filename, const std::string& rgb_filename,
                        bool repeat) {
 
     depth_image_stream_.open(depth_filename.c_str(), std::ios::in | std::ios::binary);
@@ -84,6 +95,8 @@ namespace kfusion {
     } else {
       std::cerr << "[kfusion::BinSource::open] : no rgb frames in the binary file" << std::endl;
     }
+
+    return total_frames_;
   }
 
   void BinSource::release() {
@@ -132,7 +145,7 @@ namespace kfusion {
         std::vector<unsigned short> aligned_depth_frame(depth_size, 0);
 
         int d_i;
-        #pragma omp parallel for
+#pragma omp parallel for
         for (d_i = 0; d_i < depth_size; ++d_i) {
           float u_ir = d_i % depth_width;
           float v_ir = d_i / depth_width;
@@ -158,7 +171,7 @@ namespace kfusion {
 
 
           if (new_depth_val > 0) {
-            #pragma omp critical
+#pragma omp critical
             {
               // Check that new depth is smaller than current depth (not masked)
               if (aligned_depth_frame[j] > 0) {
