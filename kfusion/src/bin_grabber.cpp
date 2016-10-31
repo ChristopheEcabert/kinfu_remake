@@ -80,6 +80,8 @@ namespace kfusion {
 
     if (depth_num_frames > 0){
       total_frames_ = total_frames_ == -1 ? std::min(depth_num_frames, rgb_num_frames) : total_frames_;
+      std::cout << "[kfusion::BinSource::open] : Number of frames that will be used = " <<
+                total_frames_ << std::endl;
 
       kinect_data_->depth_block_size = depth_block_size;
       kinect_data_->depth_frame_width = depth_frame_w;
