@@ -89,8 +89,8 @@ install(DIRECTORY include/ DESTINATION include/ FILES_MATCHING PATTERN "*.h*")
 
 target_link_libraries(kfusion ${CUDA_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${OpenCV_LIBS})
 
-MESSAGE("OpenNI FOUND = ${OPENNI_FOUND}")
-
 if (OPENNI_FOUND)
     target_link_libraries(kfusion ${OPENNI_LIBRARY})
+else (OPENNI_FOUND)
+    MESSAGE("OpenNI NOT found")
 endif(OPENNI_FOUND)

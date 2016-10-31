@@ -37,8 +37,8 @@ else(OPENMP_FOUND)
 endif()
 
 # ---[ find dependencies
-find_package(OpenCV 2.4.8 REQUIRED COMPONENTS core viz highgui)
-find_package(CUDA 5.0 REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core viz highgui)
+find_package(CUDA REQUIRED)
 find_package(OpenNI)
 include_directories(${OpenCV_INCLUDE_DIRS} ${CUDA_INCLUDE_DIRS} ${OPENNI_INCLUDE_DIR})
 

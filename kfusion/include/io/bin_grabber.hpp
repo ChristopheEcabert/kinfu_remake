@@ -80,7 +80,7 @@ class KF_EXPORTS BinSource {
   };
 
   BinSource(const std::string& depth_filename, const std::string& rgb_filename,
-            bool repeat = false);
+            int n_frames = -1, bool repeat = false);
 
   void open(const std::string& depth_filename, const std::string& rgb_filename,
             bool repeat = false);
@@ -98,7 +98,7 @@ class KF_EXPORTS BinSource {
   double pixelSize;             // mm
   unsigned short max_depth;     // mm
 
-  bool setRegistration (bool value = false);
+  void setRegistration (bool value = false);
 
  private:
 

@@ -15,9 +15,11 @@
 
 namespace kfusion {
 
-  BinSource::BinSource(const std::string& depth_filename, const std::string& rgb_filename,
-            bool repeat)
-    : manual_align_(false)
+  BinSource::BinSource(const std::string& depth_filename,
+                       const std::string& rgb_filename, int n_frames,
+                       bool repeat)
+    : total_frames_(n_frames)
+    , manual_align_(false)
     , K_ir_((cv::Mat_<float>(3,3) << 589.9,   0.0, 328.4,
                                       0.0, 589.1, 236.89,
                                       0.0,   0.0,   1.0))
@@ -66,8 +68,7 @@ namespace kfusion {
     }
 
     if (depth_num_frames > 0){
-      // TODO: Better way to handle different number of frames...
-      total_frames_ = std::min(depth_num_frames, rgb_num_frames);
+      total_frames_ = total_frames_ == -1 ? std::min(depth_num_frames, rgb_num_frames) : total_frames_;
 
       kinect_data_->depth_block_size = depth_block_size;
       kinect_data_->depth_frame_width = depth_frame_w;
@@ -182,7 +183,7 @@ namespace kfusion {
 
   //parameters taken from camera/oni
 
-  bool BinSource::setRegistration (bool value) {
+  void BinSource::setRegistration (bool value) {
     manual_align_ = value;
   }
 
