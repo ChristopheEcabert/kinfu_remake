@@ -5,7 +5,7 @@
 #ifndef KFUSION_COLOR_VOLUME_HPP
 #define KFUSION_COLOR_VOLUME_HPP
 
-#include <kfusion/types.hpp>
+#include "kfusion/types.hpp"
 
 namespace kfusion
 {

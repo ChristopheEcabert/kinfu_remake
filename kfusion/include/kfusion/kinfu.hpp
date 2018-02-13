@@ -1,11 +1,13 @@
 #pragma once
 
-#include <kfusion/types.hpp>
-#include <kfusion/cuda/tsdf_volume.hpp>
-#include <kfusion/cuda/color_volume.hpp>
-#include <kfusion/cuda/projective_icp.hpp>
 #include <vector>
 #include <string>
+
+#include "kfusion/types.hpp"
+#include "kfusion/cuda/tsdf_volume.hpp"
+#include "kfusion/cuda/color_volume.hpp"
+#include "kfusion/cuda/projective_icp.hpp"
+
 
 namespace kfusion
 {

@@ -1,10 +1,10 @@
 #include <iostream>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/viz/vizcore.hpp>
-#include <kfusion/kinfu.hpp>
-//#include <io/capture.hpp>
-#include <io/bin_grabber.hpp>
+
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/viz/vizcore.hpp"
+#include "kfusion/kinfu.hpp"
+#include "io/bin_grabber.hpp"
 
 using namespace kfusion;
 
@@ -37,13 +37,19 @@ struct KinFuApp
    * @brief Constructor of the struct, only taking a BinSource data source
    * @param[in] source, a BinSource from which the frames are grabbed
    */
-  KinFuApp(BinSource& source) : exit_ (false),  interactive_mode_(false), capture_ (source), pause_(false) {
+  KinFuApp(BinSource& source) : exit_ (false),
+                                interactive_mode_(false),
+                                capture_ (source),
+                                pause_(false) {
       KinFuParams params = KinFuParams::default_params();
       kinfu_ = KinFu::Ptr( new KinFu(params) );
 
       capture_.setRegistration(true);
 
-      cv::viz::WCube cube(cv::Vec3d::all(0), cv::Vec3d(params.volume_size), true, cv::viz::Color::apricot());
+      cv::viz::WCube cube(cv::Vec3d::all(0),
+                          cv::Vec3d(params.volume_size),
+                          true,
+                          cv::viz::Color::apricot());
       viz.showWidget("cube", cube, params.volume_pose);
       viz.showWidget("coor", cv::viz::WCoordinateSystem(0.1));
       viz.registerKeyboardCallback(KeyboardCallback, this);
@@ -56,12 +62,18 @@ struct KinFuApp
    * @param[in] source, a BinSource from which the frames are grabbed
    * @param[in] params, a KinFuParams struct containing the parameters
    */
-  KinFuApp(BinSource& source, const KinFuParams& params) : exit_ (false),  interactive_mode_(false), capture_ (source), pause_(false) {
+  KinFuApp(BinSource& source, const KinFuParams& params) : exit_ (false),
+                                                           interactive_mode_(false),
+                                                           capture_ (source),
+                                                           pause_(false) {
     kinfu_ = KinFu::Ptr( new KinFu(params) );
 
     capture_.setRegistration(true);
 
-    cv::viz::WCube cube(cv::Vec3d::all(0), cv::Vec3d(params.volume_size), true, cv::viz::Color::apricot());
+    cv::viz::WCube cube(cv::Vec3d::all(0),
+                        cv::Vec3d(params.volume_size),
+                        true,
+                        cv::viz::Color::apricot());
     viz.showWidget("cube", cube, params.volume_pose);
     viz.showWidget("coor", cv::viz::WCoordinateSystem(0.1));
     viz.registerKeyboardCallback(KeyboardCallback, this);
@@ -219,13 +231,15 @@ int main (int argc, char* argv[])
   if(cuda::checkIfPreFermiGPU(device))
       return std::cout << std::endl << "Kinfu is not supported for pre-Fermi GPU architectures, and not built for them by default. Exiting..." << std::endl, 1;
 
-  BinSource capture(argv[1], argv[2]);
+  BinSource capture(argv[1], argv[2], -1);
 
   KinFuParams custom_params = KinFuParams::default_params();
   custom_params.integrate_color = true;
   custom_params.volume_dims = Vec3i::all(256);
   custom_params.volume_size = Vec3f::all(0.7f);
-  custom_params.volume_pose = Affine3f().translate(Vec3f(-custom_params.volume_size[0]/2, -custom_params.volume_size[1]/2, 0.5f));
+  custom_params.volume_pose = Affine3f().translate(Vec3f(-custom_params.volume_size[0]/2,
+                                                         -custom_params.volume_size[1]/2,
+                                                         0.5f));
   custom_params.intr = Intr(520.89, 520.23, 324.54, 237.553);
   custom_params.tsdf_trunc_dist = 0.05;
 

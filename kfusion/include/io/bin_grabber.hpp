@@ -10,10 +10,11 @@
 #ifndef __KFUSION_BIN_SOURCE__
 #define __KFUSION_BIN_SOURCE__
 
-#include <kfusion/kinfu.hpp>
-#include <opencv2/core/core.hpp>
 #include <string>
 #include <fstream>
+
+#include "opencv2/core/core.hpp"
+#include "kfusion/kinfu.hpp"
 
 namespace kfusion {
 class KF_EXPORTS BinSource {
@@ -44,8 +45,12 @@ class KF_EXPORTS BinSource {
      * @fn  KinectData(void)
      * @brief Default constructor
      */
-    KinectData(void) : depth_frame_width(0), depth_frame_height(0),
-                       depth_frame(0), rgb_frame_width(0), rgb_frame_height(0), rgb_frame(0) {}
+    KinectData(void) : depth_frame_width(0),
+                       depth_frame_height(0),
+                       depth_frame(0),
+                       rgb_frame_width(0),
+                       rgb_frame_height(0),
+                       rgb_frame(0) {}
 
     /**
      * @name  ~KinectData
@@ -79,14 +84,51 @@ class KF_EXPORTS BinSource {
     }
   };
 
-  BinSource(const std::string& depth_filename, const std::string& rgb_filename,
+  /**
+   * @name  BinSource
+   * @fn    BinSource(const std::string& depth_filename,
+            const std::string& rgb_filename,
+            const int& n_frame,
+            bool repeat = false)
+   * @brief Constructor
+   * @param[in] depth_filename  Path to binary depth file
+   * @param[in] rgb_filename    Path to binary color file
+   * @param[in] n_frame         Number maximum of frame to process, if -1
+   *                            process all
+   * @param[in] repeat          Repeat flag
+   */
+  BinSource(const std::string& depth_filename,
+            const std::string& rgb_filename,
+            const int& n_frame,
             bool repeat = false);
 
-  void open(const std::string& depth_filename, const std::string& rgb_filename,
+  /**
+   * @name
+   * @fn
+   * @brief Open binary loader
+   * @param[in] depth_filename  Path to binary depth file
+   * @param[in] rgb_filename    Path to binary color file
+   * @param[in] n_frame         Number maximum of frame to process, if -1
+   *                            process all
+   * @param[in] repeat          Repeat flag
+   */
+  void open(const std::string& depth_filename,
+            const std::string& rgb_filename,
+            const int& n_frame,
             bool repeat = false);
 
+  /**
+   * @name  release
+   * @fn    void release()
+   * @brief Close binary loader
+   */
   void release();
 
+  /**
+   * @name  ~BinSource
+   * @fn    ~BinSource()
+   * @brief Destructor
+   */
   ~BinSource();
 
   bool grab(cv::Mat &depth, cv::Mat &image);

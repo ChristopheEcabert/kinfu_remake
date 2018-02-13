@@ -1,14 +1,16 @@
 #pragma once
 
+#include <cstddef>
+
 #if defined(__CUDACC__)
     #define __kf_hdevice__ __host__ __device__ __forceinline__
     #define __kf_device__ __device__ __forceinline__
 #else
     #define __kf_hdevice__
     #define __kf_device__
-#endif  
+#endif
 
-#include <cstddef>
+
 
 namespace kfusion
 {
@@ -30,7 +32,7 @@ namespace kfusion
         };
 
         template<typename T> struct PtrSz : public DevPtr<T>
-        {                     
+        {
             __kf_hdevice__ PtrSz() : size(0) {}
             __kf_hdevice__ PtrSz(T* data_arg, size_t size_arg) : DevPtr<T>(data_arg), size(size_arg) {}
 
@@ -38,12 +40,12 @@ namespace kfusion
         };
 
         template<typename T>  struct PtrStep : public DevPtr<T>
-        {   
+        {
             __kf_hdevice__ PtrStep() : step(0) {}
             __kf_hdevice__ PtrStep(T* data_arg, size_t step_arg) : DevPtr<T>(data_arg), step(step_arg) {}
 
             /** \brief stride between two consecutive rows in bytes. Step is stored always and everywhere in bytes!!! */
-            size_t step;            
+            size_t step;
 
             __kf_hdevice__       T* ptr(int y = 0)       { return (      T*)( (      char*)DevPtr<T>::data + y * step); }
             __kf_hdevice__ const T* ptr(int y = 0) const { return (const T*)( (const char*)DevPtr<T>::data + y * step); }
@@ -53,13 +55,13 @@ namespace kfusion
         };
 
         template <typename T> struct PtrStepSz : public PtrStep<T>
-        {   
+        {
             __kf_hdevice__ PtrStepSz() : cols(0), rows(0) {}
             __kf_hdevice__ PtrStepSz(int rows_arg, int cols_arg, T* data_arg, size_t step_arg)
                 : PtrStep<T>(data_arg, step_arg), cols(cols_arg), rows(rows_arg) {}
 
             int cols;
-            int rows;                                                                              
+            int rows;
         };
     }
 

@@ -66,7 +66,7 @@ struct kfusion::cuda::ProjectiveICP::StreamHelper
 /// ProjectiveICP
 
 kfusion::cuda::ProjectiveICP::ProjectiveICP() : angle_thres_(deg2rad(20.f)), dist_thres_(0.1f)
-{ 
+{
     const int iters[] = {10, 5, 4, 0};
     std::vector<int> vector_iters(iters, iters + 4);
     setIterationsNum(vector_iters);
@@ -151,9 +151,9 @@ bool kfusion::cuda::ProjectiveICP::estimateTransform(Affine3f& affine, const Int
             //checking nullspace
             double det = cv::determinant(A);
 
-            if (fabs (det) < 1e-15 || cv::viz::isNan(det))
+            if (fabs (det) < 1e-15 || std::isnan(det))
             {
-                if (cv::viz::isNan(det)) cout << "qnan" << endl;
+                if (std::isnan(det)) cout << "qnan" << endl;
                 return false;
             }
 
@@ -196,9 +196,9 @@ bool kfusion::cuda::ProjectiveICP::estimateTransform(Affine3f& affine, const Int
             //checking nullspace
             double det = cv::determinant(A);
 
-            if (fabs (det) < 1e-15 || cv::viz::isNan (det))
+            if (fabs (det) < 1e-15 || std::isnan (det))
             {
-                if (cv::viz::isNan (det)) cout << "qnan" << endl;
+                if (std::isnan (det)) cout << "qnan" << endl;
                 return false;
             }
 

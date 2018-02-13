@@ -1,7 +1,7 @@
 #pragma once
 
-#include <kfusion/exports.hpp>
-#include <kfusion/cuda/kernel_containers.hpp>
+#include "kfusion/exports.hpp"
+#include "kfusion/cuda/kernel_containers.hpp"
 
 namespace kfusion
 {

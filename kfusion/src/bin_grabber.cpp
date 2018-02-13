@@ -8,15 +8,29 @@
  */
 
 #include <iostream>
-#include <kfusion/kinfu.hpp>
 #include <fstream>
 
 #include "io/bin_grabber.hpp"
 
 namespace kfusion {
 
-  BinSource::BinSource(const std::string& depth_filename, const std::string& rgb_filename,
-            bool repeat)
+  /*
+   * @name  BinSource
+   * @fn    BinSource(const std::string& depth_filename,
+            const std::string& rgb_filename,
+            const int& n_frame,
+            bool repeat = false)
+   * @brief Constructor
+   * @param[in] depth_filename  Path to binary depth file
+   * @param[in] rgb_filename    Path to binary color file
+   * @param[in] n_frame         Number maximum of frame to process, if -1
+   *                            process all
+   * @param[in] repeat          Repeat flag
+   */
+  BinSource::BinSource(const std::string& depth_filename,
+                       const std::string& rgb_filename,
+                       const int& n_frame,
+                       bool repeat)
     : manual_align_(false)
     , K_ir_((cv::Mat_<float>(3,3) << 589.9,   0.0, 328.4,
                                       0.0, 589.1, 236.89,
@@ -32,14 +46,28 @@ namespace kfusion {
     this->open(depth_filename, rgb_filename, repeat);
   }
 
-  void BinSource::open(const std::string& depth_filename, const std::string& rgb_filename,
+  /*
+   * @name
+   * @fn
+   * @brief Open binary loader
+   * @param[in] depth_filename  Path to binary depth file
+   * @param[in] rgb_filename    Path to binary color file
+   * @param[in] n_frame         Number maximum of frame to process, if -1
+   *                            process all
+   * @param[in] repeat          Repeat flag
+   */
+  void BinSource::open(const std::string& depth_filename,
+                       const std::string& rgb_filename,
+                       const int& n_frame,
                        bool repeat) {
 
-    depth_image_stream_.open(depth_filename.c_str(), std::ios::in | std::ios::binary);
+    depth_image_stream_.open(depth_filename.c_str(),
+                             std::ios::in | std::ios::binary);
     if(!depth_image_stream_.is_open()) {
       std::cerr << "[kfusion::BinSource::open] Error: Path is not a regular file: " << depth_filename << std::endl;
     }
-    rgb_image_stream_.open(rgb_filename.c_str(), std::ios::in | std::ios::binary);
+    rgb_image_stream_.open(rgb_filename.c_str(),
+                           std::ios::in | std::ios::binary);
     if (!rgb_image_stream_.is_open()) {
       std::cerr << "[kfusion::BinSource::open] Error: Path is not a regular file: " << rgb_filename << std::endl;
     }
@@ -67,8 +95,12 @@ namespace kfusion {
 
     if (depth_num_frames > 0){
       // TODO: Better way to handle different number of frames...
-      total_frames_ = std::min(depth_num_frames, rgb_num_frames);
-
+      // Ensure the reuired number of frame is smaller than the maximum
+      // available frame
+      int maxframe = std::min(depth_num_frames, rgb_num_frames);
+      total_frames_ = n_frame == -1 ?
+                      maxframe :
+                      std::min(n_frame, maxframe);
       kinect_data_->depth_block_size = depth_block_size;
       kinect_data_->depth_frame_width = depth_frame_w;
       kinect_data_->depth_frame_height = depth_frame_h;
@@ -85,10 +117,20 @@ namespace kfusion {
     }
   }
 
+  /*
+   * @name  release
+   * @fn    void release()
+   * @brief Close binary loader
+   */
   void BinSource::release() {
     kinect_data_.release();
   }
 
+  /*
+   * @name  ~BinSource
+   * @fn    ~BinSource()
+   * @brief Destructor
+   */
   BinSource::~BinSource() {
     this->release();
   }
@@ -99,19 +141,27 @@ namespace kfusion {
     if (cur_frame_ < total_frames_) {
       unsigned short crap;
 
-      int depth_frame_size = this->kinect_data_->depth_frame_width * this->kinect_data_->depth_frame_height;
+      int depth_frame_size = (this->kinect_data_->depth_frame_width *
+                              this->kinect_data_->depth_frame_height);
       this->kinect_data_->depth_frame.resize(depth_frame_size);
       for (int i=0; i < depth_frame_size; ++i) {
         depth_image_stream_.read((char*)(&crap), 2);
-        depth_image_stream_.read((char*)(&(this->kinect_data_->depth_frame[i])), 2);
+        depth_image_stream_.read((char*)(&(this->kinect_data_->depth_frame[i])),
+                                 2);
       }
 
-      int rgb_frame_size = this->kinect_data_->rgb_frame_width * this->kinect_data_->rgb_frame_height;
+      int rgb_frame_size = (this->kinect_data_->rgb_frame_width *
+                            this->kinect_data_->rgb_frame_height);
       this->kinect_data_->rgb_frame.resize(rgb_frame_size);
-      rgb_image_stream_.read((char*)(&(this->kinect_data_->rgb_frame[0])), 4 * rgb_frame_size);
+      rgb_image_stream_.read((char*)(&(this->kinect_data_->rgb_frame[0])),
+                             4 * rgb_frame_size);
 
-      image.create(this->kinect_data_->rgb_frame_height, this->kinect_data_->rgb_frame_width, CV_8UC4);
-      memcpy(image.data, this->kinect_data_->rgb_frame.data(), 4 * rgb_frame_size);
+      image.create(this->kinect_data_->rgb_frame_height,
+                   this->kinect_data_->rgb_frame_width,
+                   CV_8UC4);
+      memcpy(image.data,
+             this->kinect_data_->rgb_frame.data(),
+             4 * rgb_frame_size);
 
       success = true;
       ++cur_frame_;
@@ -173,8 +223,11 @@ namespace kfusion {
         // Swap the content of depth_frame_ and aligned_depth_frame
         this->kinect_data_->depth_frame.swap(aligned_depth_frame);
       }
-      depth.create(this->kinect_data_->depth_frame_height, this->kinect_data_->depth_frame_width, CV_16UC1);
-      memcpy(depth.data, this->kinect_data_->depth_frame.data(), 2 * depth_frame_size);
+      depth.create(this->kinect_data_->depth_frame_height,
+                   this->kinect_data_->depth_frame_width,
+                   CV_16UC1);
+      memcpy(depth.data, this->kinect_data_->depth_frame.data(),
+             2 * depth_frame_size);
     }
 
     return success;
