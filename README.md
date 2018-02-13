@@ -12,7 +12,7 @@ Key changes/features:
 Dependencies:
 * Fermi or Kepler or newer
 * CUDA 5.0 or higher
-* OpenCV 2.4.9 with new Viz module (only opencv_core, opencv_highgui, opencv_imgproc, opencv_viz modules required). Make sure that WITH_VTK flag is enabled in CMake during OpenCV configuration.
+* OpenCV with new Viz module (only opencv_core, opencv_highgui, opencv_imgproc, opencv_viz modules required). Make sure that WITH_VTK flag is enabled in CMake during OpenCV configuration.
 * OpenNI v1.5.4 (for Windows can download and install from http://pointclouds.org/downloads/windows.html)
 
 Implicit dependency (needed by opencv_viz):
